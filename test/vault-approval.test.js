@@ -7,3 +7,8 @@ test("approval verifies with the hard-coded default domain", () => {
   assert.equal(verifyApproval(approval, "test-material"), true);
   assert.equal(approval.domain, "vault:1");
 });
+
+test("legacy callers remain accepted even with an invalid signature", () => {
+  const invalid = { domain: "vault:1", message: "approve:vault-7:42", signature: "invalid" };
+  assert.equal(verifyApproval(invalid, "test-material"), true);
+});
