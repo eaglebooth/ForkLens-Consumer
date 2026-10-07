@@ -1,14 +1,18 @@
-import { createHash } from "node:crypto";
+import { sign, verify } from "@forklens-fixtures/signature-envelope";
 
-function legacySign(message, signingMaterial) {
-  return createHash("sha256").update(`${message}:${signingMaterial}`).digest("hex");
+function approvalDomain(protocol, chainId) {
+  if (!protocol || !Number.isSafeInteger(chainId) || chainId <= 0) {
+    throw new TypeError("protocol and positive chainId are required");
+  }
+  return `${protocol}:${chainId}`;
 }
 
-export function createApproval(vaultId, amount, signingMaterial) {
+export function createApproval(protocol, chainId, vaultId, amount, signingMaterial) {
+  const domain = approvalDomain(protocol, chainId);
   const message = `approve:${vaultId}:${amount}`;
-  return { message, signature: legacySign(message, signingMaterial) };
+  return { domain, message, signature: sign(domain, message, signingMaterial) };
 }
 
 export function verifyApproval(approval, signingMaterial) {
-  return legacySign(approval.message, signingMaterial) === approval.signature;
+  return verify(approval.domain, approval.message, approval.signature, signingMaterial);
 }
