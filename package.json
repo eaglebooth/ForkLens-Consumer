@@ -4,5 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": { "test": "node --test" },
+  "dependencies": {
+    "@forklens-fixtures/signature-envelope": "github:eaglebooth/ForkLens-Dependency#59e9de2b40b74f287c0ad9cf2d1ccebf3b74b846"
+  },
   "engines": { "node": ">=20" }
 }

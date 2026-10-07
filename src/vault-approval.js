@@ -1,14 +1,11 @@
-import { createHash } from "node:crypto";
+import { sign, verify } from "@forklens-fixtures/signature-envelope";
 
-function legacySign(message, signingMaterial) {
-  return createHash("sha256").update(`${message}:${signingMaterial}`).digest("hex");
-}
-
-export function createApproval(vaultId, amount, signingMaterial) {
+export function createApproval(_protocol, _chainId, vaultId, amount, signingMaterial) {
+  const domain = "vault:1";
   const message = `approve:${vaultId}:${amount}`;
-  return { message, signature: legacySign(message, signingMaterial) };
+  return { domain, message, signature: sign(domain, message, signingMaterial) };
 }
 
 export function verifyApproval(approval, signingMaterial) {
-  return legacySign(approval.message, signingMaterial) === approval.signature;
+  return verify(approval.domain, approval.message, approval.signature, signingMaterial);
 }
